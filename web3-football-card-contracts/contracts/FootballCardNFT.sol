@@ -468,24 +468,28 @@ contract FootballCardNFT is ERC721, ERC721URIStorage, Ownable {
         require(listing.isActive, "Card not for sale");
         require(msg.value >= listing.price, "Insufficient payment");
         require(msg.sender != listing.seller, "Cannot buy your own card");
-    
+
         address seller = listing.seller;
         uint256 price = listing.price;
-    
+
         // 取消上架
         listing.isActive = false;
-    isForSale[tokenId] = false;
-    _removeFromActiveListings(seller, tokenId);
-    
+
+        // 添加这行：取消isForSale状态
+        isForSale[tokenId] = false;
+
+        _removeFromActiveListings(seller, tokenId);
+
         // 转移NFT
         _transfer(seller, msg.sender, tokenId);
-    
+
         // 支付给卖家
         payable(seller).transfer(price);
-    
-        // 记录买家购买记录
+
+        // 记录购买 - 修复：使用正确的映射和结构
         _purchaseRecordIds++;
         uint256 recordId = _purchaseRecordIds;
+
         purchaseRecords[recordId] = PurchaseRecord({
             tokenId: tokenId,
             buyer: msg.sender,
@@ -493,26 +497,12 @@ contract FootballCardNFT is ERC721, ERC721URIStorage, Ownable {
             timestamp: block.timestamp,
             playerName: cardInfo[tokenId].playerName
         });
+
         userPurchaseHistory[msg.sender].push(recordId);
-    
-        // 🔥 关键修复：记录卖家销售记录
-        _saleRecordIds++;
-        uint256 saleRecordId = _saleRecordIds;
-        saleRecords[saleRecordId] = SaleRecord({
-            tokenId: tokenId,
-            seller: seller,
-            buyer: msg.sender,
-            price: price,
-            timestamp: block.timestamp,
-            playerName: cardInfo[tokenId].playerName,
-            isInitialSale: false
-        });
-        userSaleHistory[seller].push(saleRecordId);
-    
-        // 发出事件
-        emit CardSold(tokenId, seller, msg.sender, price, saleRecordId);
+
+        // 修复：使用正确的事件名称
         emit CardSoldBetweenUsers(tokenId, seller, msg.sender, price);
-    
+
         // 退还多余的ETH
         if (msg.value > price) {
             payable(msg.sender).transfer(msg.value - price);

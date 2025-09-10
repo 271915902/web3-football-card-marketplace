@@ -1,9 +1,14 @@
+'use client'
 import React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Button } from "../ui/button";
 import { Zap, Trophy, TrendingUp, User, Wallet } from "lucide-react";
 import ConnectWalletButton from "./ConnectWalletButton";
+
 function Header() {
+  const pathname = usePathname();
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
@@ -22,7 +27,7 @@ function Header() {
         <nav className="hidden md:flex items-center space-x-6">
           <Link
             href="/marketplace"
-            className="text-sm font-medium transition-colors hover:text-neon-blue"
+            className={`text-sm font-medium transition-colors hover:text-neon-blue ${pathname === "/marketplace" ? "text-neon-blue" : ""}`}
           >
             市场
           </Link>
@@ -32,15 +37,15 @@ function Header() {
           >
             收藏
           </Link>
-          <Link
+          {/* <Link
             href="/leaderboard"
-            className="text-sm font-medium transition-colors hover:text-neon-blue"
+            className={`text-sm font-medium transition-colors hover:text-neon-blue ${pathname === "/leaderboard" ? "text-neon-blue" : ""}`}
           >
             排行榜
-          </Link>
+          </Link> */}
           <Link
             href="/trade"
-            className="text-sm font-medium transition-colors hover:text-neon-blue"
+            className={`text-sm font-medium transition-colors hover:text-neon-blue ${pathname === "/trade" ? "text-neon-blue" : ""}`}
           >
             交易
           </Link>
