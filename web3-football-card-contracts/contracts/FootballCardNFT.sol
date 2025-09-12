@@ -414,7 +414,7 @@ contract FootballCardNFT is ERC721, ERC721URIStorage, Ownable {
         require(ownerOf(tokenId) == msg.sender, "Not the owner");
         require(price > 0, "Price must be greater than 0");
         require(!userListings[tokenId].isActive, "Card already listed");
-
+       
         userListings[tokenId] = UserListing({
             tokenId: tokenId,
             seller: msg.sender,
